@@ -1,11 +1,12 @@
-from flask import Flask, render_template, jsonify
-
-todos = ['Study Vue', 'Study Flask', 'Study Toy Problems']
+from flask import Flask, render_template
+from TodosAPI import todos_api
 
 app = Flask(__name__,
     static_folder = "./dist/static",
     template_folder = "./dist"
 )
+
+app.register_blueprint(todos_api)
 
 @app.route('/')
 def serve_vue_app():
@@ -13,10 +14,6 @@ def serve_vue_app():
     Serve our vue app
     """
     return(render_template('index.html'))
-
-@app.route('/todos', methods=['GET'])
-def serve_all_todos():
-    return jsonify({"items" : todos})
 
 @app.after_request
 def add_header(req):
