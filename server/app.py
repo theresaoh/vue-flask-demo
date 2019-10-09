@@ -20,22 +20,22 @@ def create_app():
     db.init_app(app)
     app.register_blueprint(todos_api)
 
-app.register_blueprint(todos_api)
+    @app.route('/')
+    def serve_vue_app():
+        """
+        Serve our vue app
+        """
+        return(render_template('index.html')) 
 
-@app.route('/')
-def serve_vue_app():
-    """
-    Serve our vue app
-    """
-    return(render_template('index.html'))
+    @app.after_request
+    def add_header(req):
+        """
+        Clear Cache for hot-reloading
+        """
+        req.headers["Cache-Control"] = "no-cache"
+        return req
 
-@app.after_request
-def add_header(req):
-    """
-    Clear Cache for hot-reloading
-    """
-    req.headers["Cache-Control"] = "no-cache"
-    return req
+    return app
 
     def setup_database(app):
         with app.app_context():
