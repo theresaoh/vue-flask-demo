@@ -2,8 +2,6 @@ from flask import Blueprint, jsonify, request
 from sqlAlchemy_db_instance import db
 # from app import Todo
 
-todos = [{"item": "Study SQL","id": 0, "done": "False"}]
-
 todos_api = Blueprint('todos_api', __name__ )
 
 class Todo(db.Model):
@@ -13,14 +11,15 @@ class Todo(db.Model):
 
 @todos_api.route('/todos', methods=['GET'])
 def serve_all_todos():
-    return jsonify({"items" : todos})
+    todo_instances = db.session.query(Todo).all()
+    todo_items = [{"id": todo.id, "item": todo.item, "done": todo.done} for todo in todo_instances]
+    return jsonify({"items" : todo_items})
 
 @todos_api.route('/todo', methods=['POST'])
 def add_todo():
-    todos.append({"item": request.json["item"],"id": 0, "done": "False"})
-    todo = Todo()
-    todo.item = request.json["item"]
-    todo.done = False
-    db.session.add(todo)
+    new_todo = Todo()
+    new_todo.item = request.json["item"]
+    new_todo.done = False
+    db.session.add(new_todo)
     db.session.commit()
     return jsonify(success=True)
