@@ -1,6 +1,5 @@
 import os
 from flask import Flask, render_template
-from flask_sqlalchemy import SQLAlchemy
 from TodosAPI import todos_api, Todo
 from sqlAlchemy_db_instance import db
 
@@ -19,21 +18,6 @@ def create_app():
     app.config['SQLALCHEMY_ECHO'] = True
     db.init_app(app)
     app.register_blueprint(todos_api)
-
-    @app.route('/')
-    def serve_vue_app():
-        """
-        Serve our vue app
-        """
-        return(render_template('index.html')) 
-
-    @app.after_request
-    def add_header(req):
-        """
-        Clear Cache for hot-reloading
-        """
-        req.headers["Cache-Control"] = "no-cache"
-        return req
 
     return app
 
